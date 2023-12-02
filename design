@@ -1,1 +1,21 @@
 
+void AED::start(){
+    bool isConnected = childPads->getConnected() || adultPads->getConnected();
+    qDebug()<<isConnected;
+    // Loop Prompt for CHECK RESPONSIVENESS and CALL FOR HELP and CONNECT
+    if(isConnected==false){
+        QString messages[]={"CHECK RESPONSIVENESS.","CALL FOR HELP.","ATTACH DEFIB PADS TO PATIENT’S BARE CHEST."};
+        QTimer* timer=new QTimer();
+        int currentIndex=0;
+        QObject::connect(timer,&QTimer::timeout,[=]()mutable{
+                emit updatePromptSignal(messages[currentIndex]);
+            if(++currentIndex>2){
+                timer->stop();
+            }
+        });
+        timer->start(5000);
+    }
+
+    else
+        emit updatePromptSignal("ANALYZING");// need to delate, move to Analyzing()
+}
